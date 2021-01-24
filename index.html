@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>POC DApp</title>
+</head>
+
+<body>
+
+    <h1>POC DApp</h1>
+    <label>Response</label>
+    <br />
+    <label id="myLabel"></label>
+
+</body>
+<script src="https://cdn.jsdelivr.net/npm/web3@1.2.6/dist/web3.min.js"></script>
+<script>
+    class TransactionChecker {
+
+        constructor(account) {
+            this.web3 = new Web3(new Web3.providers.WebsocketProvider('ws://localhost:8545'));
+            // web3.eth.getAccounts(console.log);
+            this.account = account.toLowerCase();
+        }
+
+        subscribe(topic) {
+            this.subscription = this.web3.eth.subscribe(topic, (err, res) => {
+                if (err) console.error(err);
+            });
+        }
+
+        watchConnexion() {
+            console.log('Connecting..');
+            this.subscription.on('connected', (res) => {
+                console.log('CONNECTED', res);
+            });
+        }
+
+        watchNewBlock() {
+            console.log('Watching new block..');
+            this.subscription.on('data', function (blockHeader) {
+                console.log(blockHeader)
+            })
+        }
+
+        watchTransactions() {
+            console.log('Watching all pending transactions...');
+            // Get specific transaction
+            this.web3.eth.getTransaction("0x6735bf64e61deb466f1f59ec7a21e3a324fa1723a12e03c0e62e8b413d0fecf5").then(console.log);
+            
+            // Check transactions very 1000ms
+            // this.subscription.on('data', (txHash) => {
+            //     setTimeout(async () => {
+            //         try {
+            //             let tx = await this.web3.eth.getTransaction(txHash);
+            //             console.log('[txHash] ', tx);
+            //             if (tx != null) {
+            //               console.log({ address: tx.from, value: this.web3.utils.fromWei(tx.value, 'ether'), timestamp: new Date() });
+            //             }
+            //         } catch (err) {
+            //             console.error(err);
+            //         }
+            //     }, 1000)
+            // });
+        }
+    }
+
+    const htmlLabel = document.getElementById('myLabel');
+
+    
+    const account = "0x12163f997310f659B943691b275F64853eAD85f6";
+    const web3 = new Web3('http://localhost:7545');
+
+    const myContractAddress = '0xEC0b607B709c60D6D6fbe465315D512e1334E14c';
+    const abi = '[{"inputs":[{"internalType":"string","name":"document","type":"string"}],"name":"checkDocument","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"string","name":"document","type":"string"}],"name":"submit","outputs":[],"stateMutability":"nonpayable","type":"function"}]';
+
+    const myContract = new web3.eth.Contract(JSON.parse(abi), myContractAddress);
+
+    // Fake data
+    const patientId = "0x12163f997310f659B943691b275F64853eAD85f6";
+    const patientSignature= "jdshfksjudhf8923045u02";
+    const doctorSignature= "skdjhfs98urw9384u5rw324";
+    const entitySignature= "234sdfsdfsf43wwertewrtwe";
+    const reportIdentifier= "000403f4-278d-4356-b9d1-5e344b8a1ehh";
+    const report = "Hello Loubna!!";
+    
+    // Available contract methods:
+    console.log(myContract.methods);
+    
+    // 1 - Submit a report
+    // myContract.methods.submit(patientId, patientSignature, doctorSignature, entitySignature, reportIdentifier, report).send({ from: account }).then((f) => {
+    //     console.log(f);
+    //     htmlLabel.innerHTML = JSON.stringify(f);
+    // });
+
+    // 2 - Check Document : This should not exist
+    myContract.methods.checkDocument("test").call(console.log)
+
+    // 3 - Get Report informations
+    // myContract.methods.getReportInfos(patientId).call(console.log)
+    
+
+
+</script>
+
+</html>

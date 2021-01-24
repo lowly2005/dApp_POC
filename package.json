@@ -1,0 +1,16 @@
+{
+  "name": "eth",
+  "version": "1.0.0",
+  "description": "",
+  "main": "deploy.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "ganache-cli": "^6.10.0-beta.2",
+    "http-server": "^0.12.3",
+    "web3": "^1.2.9"
+  }
+}
